@@ -1,4 +1,4 @@
-// Utility functions for formatting values
+// Utility functions for formatting values with luxury styling
 
 /**
  * Format a number as Philippine Peso currency
@@ -87,27 +87,27 @@ export const expenseTypeLabel = (type) => {
 };
 
 /**
- * Map expense type to color classes
+ * Map expense type to luxury color classes
  */
 export const expenseTypeColor = (type) => {
   const map = {
-    project: 'bg-blue-100 text-blue-800',
-    operation: 'bg-amber-100 text-amber-800',
-    office: 'bg-purple-100 text-purple-800',
+    project: 'bg-sky-50 text-sky-700 border border-sky-200/80',
+    operation: 'bg-amber-50 text-amber-800 border border-amber-200/80',
+    office: 'bg-purple-50 text-purple-700 border border-purple-200/80',
   };
-  return map[type] || 'bg-gray-100 text-gray-800';
+  return map[type] || 'bg-slate-100 text-slate-700 border border-slate-200';
 };
 
 /**
- * Map project status to color classes
+ * Map project status to luxury color classes
  */
 export const statusColor = (status) => {
   const map = {
-    active: 'bg-green-100 text-green-800',
-    completed: 'bg-gray-100 text-gray-700',
-    'on-hold': 'bg-orange-100 text-orange-800',
+    active: 'bg-emerald-50 text-emerald-700 border border-emerald-200/80',
+    completed: 'bg-slate-100 text-slate-700 border border-slate-200',
+    'on-hold': 'bg-amber-50 text-amber-800 border border-amber-200/80',
   };
-  return map[status] || 'bg-gray-100 text-gray-700';
+  return map[status] || 'bg-slate-100 text-slate-700 border border-slate-200';
 };
 
 /**

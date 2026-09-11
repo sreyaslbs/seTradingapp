@@ -7,37 +7,47 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50:  '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#1d4ed8',
-          700: '#1e40af',
-          800: '#1e3a8a',
-          900: '#1e2f6e',
-          950: '#0f172a',
+        sapphire: {
+          50:  '#f0f5fc',
+          100: '#e0ecf9',
+          200: '#c6def5',
+          300: '#9ec7ee',
+          400: '#6ea8e4',
+          500: '#478ad8',
+          600: '#326ec8',
+          700: '#2756b1',
+          800: '#234690',
+          850: '#1a3773',
+          900: '#152d5b',
+          950: '#0c1a36',
         },
-        gold: {
+        amber: {
+          50:  '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
           400: '#fbbf24',
           500: '#f59e0b',
           600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       boxShadow: {
-        'card': '0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.04)',
-        'card-hover': '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.06)',
-        'fab': '0 4px 14px 0 rgba(30,58,138,0.4)',
+        'card': '0 2px 8px -2px rgba(15, 43, 92, 0.06), 0 1px 4px -1px rgba(15, 43, 92, 0.04)',
+        'card-hover': '0 12px 24px -6px rgba(15, 43, 92, 0.12), 0 6px 10px -4px rgba(15, 43, 92, 0.06)',
+        'sapphire-glow': '0 8px 24px -4px rgba(21, 62, 117, 0.35)',
+        'amber-glow': '0 8px 24px -4px rgba(245, 158, 11, 0.4)',
+        'fab': '0 8px 24px -4px rgba(245, 158, 11, 0.45)',
       },
       animation: {
-        'slide-up': 'slideUp 0.3s ease-out',
+        'slide-up': 'slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
         'fade-in': 'fadeIn 0.2s ease-out',
-        'spin-slow': 'spin 3s linear infinite',
+        'pulse-subtle': 'pulseSubtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         slideUp: {
@@ -47,6 +57,10 @@ export default {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        pulseSubtle: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.85' },
         },
       },
     },

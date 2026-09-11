@@ -7,13 +7,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo.png', 'logo-banner.jpg', 'favicon.ico'],
+      includeAssets: ['logo.png', 'pwa-192x192.png', 'pwa-512x512.png', 'favicon.ico'],
       manifest: {
-        name: 'SE Trading — Expense Tracker',
+        name: 'SE Trading — Expense & Project Tracker',
         short_name: 'SE Trading',
-        description: 'Project & expense tracker for SE Trading',
-        theme_color: '#1e3a8a',
-        background_color: '#ffffff',
+        description: 'Executive project & receipt expense tracker for SE Trading',
+        theme_color: '#0f2b5c',
+        background_color: '#0c1a36',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
@@ -38,7 +38,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/firestore\.googleapis\.com\/.*/i,

@@ -5,12 +5,33 @@ import { useExpenses } from '../hooks/useExpenses';
 import { useProjects } from '../hooks/useProjects';
 import { todayInput } from '../utils/formatters';
 import toast from 'react-hot-toast';
-import { CheckCircle, ChevronDown } from 'lucide-react';
+import { CheckCircle2, ChevronDown, Receipt, Plus } from 'lucide-react';
 
 const EXPENSE_TYPES = [
-  { value: 'project', label: 'Project Expense', icon: '🏗️', desc: 'Linked to a specific project', color: 'border-blue-500 bg-blue-50' },
-  { value: 'operation', label: 'Operation Expense', icon: '⚡', desc: 'Day-to-day operational costs', color: 'border-amber-500 bg-amber-50' },
-  { value: 'office', label: 'Office Expense', icon: '🏢', desc: 'Office / admin related', color: 'border-purple-500 bg-purple-50' },
+  {
+    value: 'project',
+    label: 'Project Expense',
+    desc: 'Mandatory link to a customer project',
+    badge: 'Job Site',
+    color: 'border-sapphire-900 bg-sapphire-950 text-white',
+    unselectedColor: 'border-slate-200 bg-white text-slate-800 hover:border-slate-300',
+  },
+  {
+    value: 'operation',
+    label: 'Operation Expense',
+    desc: 'Tools, vehicles, fuel & day-to-day logistics',
+    badge: 'Operations',
+    color: 'border-amber-500 bg-amber-500/15 text-slate-900',
+    unselectedColor: 'border-slate-200 bg-white text-slate-800 hover:border-slate-300',
+  },
+  {
+    value: 'office',
+    label: 'Office Expense',
+    desc: 'Utilities, stationery & administrative expenses',
+    badge: 'Admin',
+    color: 'border-indigo-600 bg-indigo-500/15 text-slate-900',
+    unselectedColor: 'border-slate-200 bg-white text-slate-800 hover:border-slate-300',
+  },
 ];
 
 export default function AddExpense() {
@@ -34,7 +55,7 @@ export default function AddExpense() {
       tin: '',
       amount: '',
       notes: '',
-    }
+    },
   });
 
   const selectedType = watch('type');
@@ -43,7 +64,7 @@ export default function AddExpense() {
   // Auto-fill project name when projectId changes
   useEffect(() => {
     if (selectedProjectId) {
-      const p = projects.find(pr => pr.id === selectedProjectId);
+      const p = projects.find((pr) => pr.id === selectedProjectId);
       if (p) setValue('projectName', p.name);
     } else {
       setValue('projectName', '');
@@ -65,18 +86,28 @@ export default function AddExpense() {
     }
     try {
       setLoading(true);
-      const projectData = data.type === 'project'
-        ? { projectId: data.projectId, projectName: data.projectName }
-        : { projectId: null, projectName: null };
+      const projectData =
+        data.type === 'project'
+          ? { projectId: data.projectId, projectName: data.projectName }
+          : { projectId: null, projectName: null };
 
       await addExpense({ ...data, ...projectData });
 
       if (saveAndAdd) {
-        toast.success('Expense saved! Add another.', { icon: '✅' });
-        reset({ date: todayInput(), type: data.type, projectId: data.projectId || '', storeName: '', address: '', tin: '', amount: '', notes: '' });
+        toast.success('Receipt saved! Ready for next receipt.', { icon: '✨' });
+        reset({
+          date: todayInput(),
+          type: data.type,
+          projectId: data.projectId || '',
+          storeName: '',
+          address: '',
+          tin: '',
+          amount: '',
+          notes: '',
+        });
         setSaveAndAdd(false);
       } else {
-        toast.success('Expense saved!');
+        toast.success('Receipt saved successfully!');
         navigate(-1);
       }
     } catch (err) {
@@ -91,157 +122,208 @@ export default function AddExpense() {
     }
   };
 
-  const activeProjects = projects.filter(p => p.status === 'active');
+  const activeProjects = projects.filter((p) => p.status === 'active');
 
   return (
-    <div className="page-container animate-fade-in">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
-        {/* Expense Type - Big tap targets */}
+    <div className="page-container animate-fade-in space-y-5">
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-sapphire-950 to-sapphire-900 text-white p-4 rounded-2xl border border-sapphire-700/40 shadow-sm flex items-center justify-between">
         <div>
-          <label className="section-title">Expense Type *</label>
+          <h2 className="text-sm font-extrabold tracking-tight">Quick Receipt Entry</h2>
+          <p className="text-xs text-sapphire-200">Record purchases &amp; job-site expenses</p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold shadow-md">
+          <Receipt className="w-5 h-5" />
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        {/* Expense Type - Tactile Sapphire & Amber Selector */}
+        <div>
+          <label className="section-title">
+            <span>Expense Category *</span>
+          </label>
           <div className="space-y-2">
-            {EXPENSE_TYPES.map(({ value, label, icon, desc, color }) => {
+            {EXPENSE_TYPES.map(({ value, label, desc, badge, color, unselectedColor }) => {
               const isSelected = selectedType === value;
               return (
                 <label
                   key={value}
-                  className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
-                    isSelected ? color : 'border-gray-200 bg-white'
+                  className={`flex items-center justify-between p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
+                    isSelected ? color + ' shadow-md scale-[1.01]' : unselectedColor
                   }`}
                 >
                   <input
                     type="radio"
                     value={value}
-                    {...register('type', { required: 'Please select expense type' })}
+                    {...register('type', { required: 'Please select an expense category' })}
                     className="sr-only"
                   />
-                  <span className="text-xl">{icon}</span>
-                  <div className="flex-1">
-                    <p className={`text-sm font-semibold ${isSelected ? 'text-gray-900' : 'text-gray-700'}`}>{label}</p>
-                    <p className="text-xs text-gray-500">{desc}</p>
+                  <div className="min-w-0 pr-2">
+                    <div className="flex items-center gap-2">
+                      <p className={`text-sm font-bold ${isSelected && value === 'project' ? 'text-amber-400' : ''}`}>
+                        {label}
+                      </p>
+                      <span
+                        className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                          isSelected && value === 'project'
+                            ? 'bg-amber-400 text-slate-950'
+                            : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        {badge}
+                      </span>
+                    </div>
+                    <p className={`text-xs mt-0.5 truncate ${isSelected && value === 'project' ? 'text-sapphire-200' : 'text-slate-500'}`}>
+                      {desc}
+                    </p>
                   </div>
-                  {isSelected && <CheckCircle className="w-5 h-5 text-brand-700 shrink-0" />}
+                  <div className="shrink-0">
+                    {isSelected ? (
+                      <CheckCircle2 className={`w-5 h-5 ${value === 'project' ? 'text-amber-400' : 'text-slate-900'}`} />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full border-2 border-slate-300" />
+                    )}
+                  </div>
                 </label>
               );
             })}
           </div>
-          {errors.type && <p className="text-red-500 text-xs mt-1">{errors.type.message}</p>}
+          {errors.type && <p className="text-rose-500 text-xs mt-1 font-medium">{errors.type.message}</p>}
         </div>
 
-        {/* Project selector (only when type = project) */}
+        {/* Project Selector (Mandatory for Project Expense) */}
         {selectedType === 'project' && (
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Project *</label>
+          <div className="animate-slide-up p-4 rounded-2xl bg-sapphire-50 border-2 border-sapphire-300">
+            <label className="block text-xs font-bold text-sapphire-950 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+              <span>Select Project *</span>
+              <span className="text-[10px] text-sapphire-700 font-semibold lowercase">(mandatory for project costs)</span>
+            </label>
             <div className="relative">
               <select
-                {...register('projectId', { required: selectedType === 'project' ? 'Select a project' : false })}
-                className="input-field appearance-none pr-10"
+                {...register('projectId', { required: selectedType === 'project' ? 'Please select a project' : false })}
+                className="input-field appearance-none pr-10 font-bold bg-white text-sapphire-950"
               >
-                <option value="">-- Select Project --</option>
-                {activeProjects.map(p => (
-                  <option key={p.id} value={p.id}>{p.name} ({p.client})</option>
+                <option value="">-- Choose Project --</option>
+                {activeProjects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} ({p.client})
+                  </option>
                 ))}
-                {projects.filter(p => p.status !== 'active').map(p => (
-                  <option key={p.id} value={p.id}>{p.name} [{p.status}]</option>
+                {projects.filter((p) => p.status !== 'active').map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} [{p.status}]
+                  </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
-            {errors.projectId && <p className="text-red-500 text-xs mt-1">{errors.projectId.message}</p>}
+            {errors.projectId && <p className="text-rose-600 text-xs mt-1.5 font-medium">{errors.projectId.message}</p>}
           </div>
         )}
 
-        {/* Date */}
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1.5">Date *</label>
-          <input
-            type="date"
-            {...register('date', { required: 'Date is required' })}
-            className="input-field"
-          />
-          {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date.message}</p>}
+        {/* Amount & Date in 2 columns */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Amount (₱) *</label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₱</span>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                {...register('amount', {
+                  required: 'Amount is required',
+                  min: { value: 0.01, message: 'Amount must be > 0' },
+                })}
+                placeholder="0.00"
+                className="input-field pl-8 font-extrabold text-base text-slate-900"
+                inputMode="decimal"
+              />
+            </div>
+            {errors.amount && <p className="text-rose-500 text-xs mt-1 font-medium">{errors.amount.message}</p>}
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Date *</label>
+            <div className="relative">
+              <input
+                type="date"
+                {...register('date', { required: 'Date is required' })}
+                className="input-field text-xs font-medium"
+              />
+            </div>
+            {errors.date && <p className="text-rose-500 text-xs mt-1 font-medium">{errors.date.message}</p>}
+          </div>
         </div>
 
         {/* Store Name */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1.5">Store Name *</label>
-          <input
-            {...register('storeName', { required: 'Store name is required' })}
-            placeholder="e.g. Ace Hardware"
-            className="input-field"
-            autoComplete="organization"
-          />
-          {errors.storeName && <p className="text-red-500 text-xs mt-1">{errors.storeName.message}</p>}
-        </div>
-
-        {/* Amount */}
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1.5">Amount (₱) *</label>
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Store / Supplier Name *</label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₱</span>
             <input
-              type="number"
-              min="0"
-              step="0.01"
-              {...register('amount', { required: 'Amount is required', min: { value: 0.01, message: 'Amount must be greater than 0' } })}
-              placeholder="0.00"
-              className="input-field pl-8"
-              inputMode="decimal"
+              {...register('storeName', { required: 'Store name is required' })}
+              placeholder="e.g. Ace Hardware / Wilcon"
+              className="input-field font-medium"
+              autoComplete="organization"
             />
           </div>
-          {errors.amount && <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>}
+          {errors.storeName && <p className="text-rose-500 text-xs mt-1 font-medium">{errors.storeName.message}</p>}
         </div>
 
-        {/* Address */}
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1.5">Address</label>
-          <input
-            {...register('address')}
-            placeholder="Store address"
-            className="input-field"
-          />
+        {/* Store Address & TIN */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Address</label>
+            <input
+              {...register('address')}
+              placeholder="Branch or address"
+              className="input-field text-xs"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">TIN #</label>
+            <input
+              {...register('tin')}
+              placeholder="Tax ID number"
+              className="input-field text-xs"
+              inputMode="numeric"
+            />
+          </div>
         </div>
 
-        {/* TIN */}
+        {/* Optional Notes */}
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1.5">TIN #</label>
-          <input
-            {...register('tin')}
-            placeholder="Tax Identification Number"
-            className="input-field"
-            inputMode="numeric"
-          />
-        </div>
-
-        {/* Notes */}
-        <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1.5">Notes</label>
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Notes / Particulars</label>
           <textarea
             {...register('notes')}
-            placeholder="Optional notes…"
+            placeholder="e.g. 50m copper wire, 2 breaker boxes…"
             rows={2}
-            className="input-field resize-none"
+            className="input-field resize-none text-xs"
           />
         </div>
 
-        {/* Action buttons */}
-        <div className="space-y-2 pt-2 pb-4">
+        {/* Submit Action Buttons */}
+        <div className="space-y-2.5 pt-3 pb-6">
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary w-full"
+            className="btn-gold w-full flex items-center justify-center gap-2"
             onClick={() => setSaveAndAdd(false)}
           >
-            {loading && !saveAndAdd ? 'Saving…' : '✓ Save Expense'}
+            <CheckCircle2 className="w-4 h-4" />
+            <span>{loading && !saveAndAdd ? 'Saving Receipt…' : 'Save Receipt'}</span>
           </button>
+
           <button
             type="submit"
             disabled={loading}
-            className="btn-secondary w-full"
+            className="btn-secondary w-full flex items-center justify-center gap-2"
             onClick={() => setSaveAndAdd(true)}
           >
-            {loading && saveAndAdd ? 'Saving…' : '+ Save & Add Another'}
+            <Plus className="w-4 h-4 text-sapphire-700" />
+            <span>{loading && saveAndAdd ? 'Saving…' : 'Save & Add Another Receipt'}</span>
           </button>
         </div>
       </form>

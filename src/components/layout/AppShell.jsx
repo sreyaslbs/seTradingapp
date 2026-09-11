@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 export default function AppShell() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-[#edf3fb] flex flex-col">
       <Header />
       <main className="flex-1 overflow-y-auto">
         <Outlet />
